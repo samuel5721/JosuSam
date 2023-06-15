@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../allStyle.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="../JQuery/jquery-3.6.0.min.js"></script>
+    <script>
+    </script>
+</head>
+<style>
+  #area {
+    width: 1500px;
+    height: 500px;
+    margin: 20px;;
+    resize: none;
+    padding: 7px;
+
+    font-family: "맑은 고딕";
+    font-size: 30px;
+  }
+
+  .select_box {
+    margin: auto 10px;
+
+    display: inline-block;
+    flex-direction: column;
+  }
+  .select_box p { font-size: 25px; }
+  .select_box select { height: 30px; font-size: 15px; }
+
+  button {
+    width: 400px;
+    height: 100px;
+    margin: 0 40px;
+
+    font-size: 70px;
+  }
+</style>
+<script>
+$(function() {
+
+  $("#all").hide();
+  $("#portion").hide();
+
+  $("#say_btn").click(function() {
+    $("#all").val($("#area").val());
+    transformTTS();
+  });
+
+  $("#stop_btn").click(function() {
+    speechSynthesis.cancel();
+  });
+});
+
+let portions = [];
+let voices = [];
+
+let pitch = 1.0;
+let rate = 1.0;
+
+function setVoiceList() {
+    voices = window.speechSynthesis.getVoices();
+}
+
+setVoiceList();
+if (window.speechSynthesis.onvoiceschanged !== undefined) {
+    window.speechSynthesis.onvoiceschanged = setVoiceList;
+}
+
+function speech(txt, pitch, rate) {
+
+   if(!window.speechSynthesis) {
+      alert("음성 재생을 지원하지 않는 브라우저입니다. 크롬, 파이어폭스 등의 최신 브라우저를 이용하세요");
+      return;
+   }
+
+   let lang = 'ko-KR';
+   let utterThis = new SpeechSynthesisUtterance(txt);
+   utterThis.onend = function (event) { //잘 끝났으면 end 출력
+     console.log('end');
+   };
+   utterThis.onerror = function(event) {
+     console.log('error', event);
+   };
+
+   let voiceFound = false;
+   for(let i = 0; i < voices.length ; i++) {
+     if(voices[i].lang.indexOf(lang) >= 0 || voices[i].lang.indexOf(lang.replace('-', '_')) >= 0) {
+       utterThis.voice = voices[i];
+       voiceFound = true;
+     }
+   }
+
+   if(!voiceFound) {
+     alert('voice not found');
+     return;
+   }
+
+   utterThis.lang = lang;
+   utterThis.pitch = pitch; //피치
+   utterThis.rate = rate; //속도
+
+   window.speechSynthesis.speak(utterThis);
+}
+
+function transformTTS() {
+  speechSynthesis.cancel();
+
+  portions.splice(0); //말할 부분 모두 삭제
+
+  switch($("#rate_sel option:selected").val()) { //rate_sel에 따라 속도 지정하기
+    case "medium" : rate = 1; break;
+    case "littleFast" : rate = 1.25; break;
+    case "fast" : rate = 1.5; break;
+    case "tooFast" : rate = 1.75; break;
+  }
+
+  switch($("#pitch_sel option:selected").val()) { //pitch_sel에 따라 피치 지정하기
+    case "tooLow" : pitch = 0.5; break;
+    case "low" : pitch = 0.75; break;
+    case "middle" : pitch = 1; break;
+    case "high" : pitch = 1.25; break;
+    case "tooHigh" : pitch = 1.5; break;
+  }
+
+  while($("#all").val().length > 0) { //문장 100글자 단위로 쪼개기
+    $("#portion").val($("#all").val().slice(100)); //all에서 앞 100문장을 뺀 값을 portion에 넣기
+
+    portions.push($("#all").val().substr(0,100)); //all에서 앞 100문장을 portions에다가 push하기
+
+    $("#all").val($("#portion").val()); //all을 portion으로 지정하기
+  }
+
+  setTimeout(() => { //쪼갠 문장들을 순서대로 말하기
+    for(let i in portions) {
+      speech(portions[i], pitch, rate);
+    }
+  }, 1);
+}
+</script>
+<body>
+    <div id="wrap">
+        <header> 
+            <div class="box">
+                <div id="main_logo">
+                    <a href="../../index.html"><img src="../image/logo.png" alt="" width="250px"></a>
+                </div>
+            </div>
+        </header>
+        <aside>
+            <div id="side_logo">
+                <img src="../image/side_logo.png" alt="" width="200px">
+                <p>컴퓨터 이외의 환경에서는 작동이 어려울 수 있습니다.</p>
+        </aside>
+        <section>
+          <textarea id="area" cols="30" rows="10" value="" autofocus placeholder="음성으로 변환할 택스트를 입력해 주세요."></textarea>
+          <input id="all" type="text" value="">
+          <input id="portion" type="text" value="">
+          <br>
+          <button id="say_btn">말하기</button>
+          <button id="stop_btn">멈추기</button>
+
+          <div class="select_box">
+            <p>속도</p>
+            <select id="rate_sel">
+              <option value="medium" selected>보통</option>
+              <option value="littleFast">약간 빠름</option>
+              <option value="fast">빠름</option>
+              <option value="tooFast">매우 빠름</option>
+            </select>
+          </div>
+
+          <div class="select_box">
+            <p>높낮이</p>
+            <select id="pitch_sel">
+              <option value="tooLow">매우 낮음</option>
+              <option value="low">낮음</option>
+              <option value="middle" selected>보통</option>
+              <option value="high">높음</option>
+              <option value="tooHigh">매우 높음</option>
+            </select>
+          </div>
+
+          
+        </section>
+        <footer></footer>
+    </div>
+</body>
+<script>
+</script>
+</html>

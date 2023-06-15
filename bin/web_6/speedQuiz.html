@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../allStyle.css">
+    <script src="../JQuery/jquery-3.6.0.min.js"></script>
+<style>
+    :root {
+        --selectWidth: 1650px
+    }
+    /* section */
+    #body {
+        width: 800px;
+        height: 700px;
+        margin-left: 150px;
+        float: left;
+    }
+    #body textarea {
+        width: 100%;
+        height: 100%;
+        padding: 5px;
+        resize: none;
+
+        box-sizing: border-box;
+        /*border: solid 1px black;*/
+    }
+    #setting {
+        width: 500px;
+        height: 700px;
+        margin-right: 150px;
+        float: right;
+
+        box-sizing: border-box;
+        /*border: solid 1px blue;*/
+    }
+    #setting button {
+        width: 300px;
+        height: 150px;
+        margin: 20px;
+
+        font-size: 75px;
+    }
+    #setting input[type="checkbox"] {
+        margin: 15px 0;
+    }
+
+    #quiz_pannel {
+        width: 100%;
+        height: 500px;
+
+        box-sizing: border-box;
+        /*border: solid 1px red;*/
+    }
+    #screen {
+        width: 1500px;
+        height: 480px;
+        margin: 10px auto;
+   
+        box-sizing: border-box;
+        background-color: #f6ffa4;
+
+        text-align: center;
+        display : flex;
+        justify-content : center;
+        align-items : center;
+        font-size: 200px;
+        font-weight: bold;
+    }
+    .small_font {
+        font-size: 70px;
+    }
+    #quiz_control {
+        width: auto;
+        height: 200px;
+        margin-top: 20px;
+
+        box-sizing: border-box;
+        /*border: solid 1px green;*/
+
+        text-align: center;
+        display : flex;
+        justify-content : center;
+        align-items : center;
+    }
+    #quiz_control button {
+        width: 200px;
+        height: 100px;
+        font-size: 50px;
+    }
+
+    #ingame {
+        width: 1200px;
+    }
+    #stopwatch {
+        width: 700px;
+
+        font-size: 100px;
+    }
+
+    
+
+    #outgame { width: 1300px; }
+    #outgame button {
+        width: 300px;
+        height: 100px;
+    }
+</style>
+<script>
+    let isSoundPlay;
+    let isStopwatsh;
+    let questions = [];
+    let wrongAnswer;
+    let correctAnswer;
+    let passedAnswer;
+
+    let clockAudio = new Audio("clockSound.mp3");
+    let correctAudio = [];
+    let wrongAudio = [];
+    let passAudio = [];
+    let endAudio = new Audio("endSound.mp3");
+        
+    $(function() {
+
+        $(".prepare").show();
+        $(".quiz").hide();
+
+        $("#soundPlay_check").change(function() {
+            
+        });
+
+        $("#stopwatch_check").change(function() { //스톱워치 여부 확인
+            
+        });
+
+        $("#start_btn").click(function() {
+            if($("#soundPlay_check").is(":checked")) { //소리 재생 여부 확인
+                isSoundPlay = true;
+            } else {
+                isSoundPlay = false;
+            }
+
+            if($("#stopwatch_check").is(":checked")) {
+                isStopwatsh = true;
+            } else {
+                isStopwatsh = false;
+            }
+
+            if(getReady()) {
+                quizStart();
+            }
+        });
+
+        $("#delete_btn").click(function() { $("#input_word").val(""); });
+
+        $("#correct_btn").click(function() { correct(); });
+        $("#wrong_btn").click(function() { wrong(); });
+        $("#pass_btn").click(function() { pass(); });
+        $("#reload_btn").click(function() { location.reload(); });
+
+    });
+
+    function getReady() {
+        if($("#input_word").val() != "") {
+            questions = $("#input_word").val().split("\n");
+            $(".prepare").hide();
+            $("#outgame").hide();
+            $("#ingme").show();
+            $(".quiz").show();
+            return true;
+        } else {
+            alert("단어들을 입력해주세요");
+            return false;
+        }
+    }
+        
+    function quizStart() {
+        wrongAnswer = 0; correctAnswer = 0; passedAnswer = 0;
+        if(isSoundPlay) {
+            setSound();
+            clockAudio.play();
+        }
+        showContent();
+        if(isStopwatsh) { $("#stopwatch").show(); startStopwatch(); } else { $("#stopwatch").hide(); }
+    }
+    function setSound() {
+        for(let i in questions) {
+            const sound = new Audio();
+            sound.src = "correctSound.mp3"
+            correctAudio.push(sound);
+
+            const sound2 = new Audio();
+            sound2.src = "wrongSound.mp3"
+            wrongAudio.push(sound2);
+
+            const sound3 = new Audio();
+            sound3.src = "passSound.mp3"
+            passAudio.push(sound3);
+        }
+    }
+    function showContent() {
+        if(questions.length == 0) {
+            quizEnd();
+            return;
+        } else {
+            $("#screen").text(questions[0]);
+        }
+        questions.splice(0,1);
+    }
+    function correct() {
+        if(isSoundPlay) {
+            correctAudio[questions.length].play();
+        }
+        correctAnswer++;
+        showContent();
+    }
+    function wrong() {
+        if(isSoundPlay) {
+           wrongAudio[questions.length].play();
+        }
+        wrongAnswer++;
+        showContent();
+    }
+    function pass() {
+        if(isSoundPlay) {
+            passAudio[questions.length].play();
+        }
+        passedAnswer++;
+        showContent();
+    }
+    function quizEnd() {
+        if(isSoundPlay) {
+            endAudio.play();
+        }
+        clockAudio.pause();
+        clockAudio.currentTime = 0;
+        stopStopwatch();
+
+        $("#screen").text("");
+        $("#screen").html("<p class=\"small_font\">스피드퀴즈가 끝났습니다!<br>맞힌 문제 : " + correctAnswer + "개<br>틀린 문제 : " + wrongAnswer + "개<br>넘긴 문제 : " + passedAnswer + "개</p>");
+        
+        $("#outgame").show();
+        $("#ingame").hide();
+    }
+
+    let timerId;
+    let time = 0;
+    const stopwatch = document.getElementById("stopwatch");
+    let  min, sec;
+
+    function printTime() {
+        time++;
+        $("#stopwatch").text(getTimeFormatString())
+    }
+
+    function startStopwatch() {
+        printTime();
+        stopStopwatch();
+        timerId = setTimeout(startStopwatch, 1000);
+    }
+
+    function stopStopwatch() {
+        if (timerId != null) {
+            clearTimeout(timerId);
+        }
+    }
+
+    function getTimeFormatString() {
+        hour = parseInt(String(time / (60 * 60)));
+        min = parseInt(String((time - (hour * 60 * 60)) / 60));
+        sec = time % 60;
+
+        return String(min).padStart(2, '0') + ":" + String(sec).padStart(2, '0');
+    }
+</script>
+</head>
+<body>
+    <div id="wrap">
+        <header>
+            <div class="box">
+                <div id="main_logo">
+                    <a href="../../index.html"><img src="../image/logo.png" alt="" width="250px"></a>
+                </div>
+            </div>
+        </header>
+        <aside>
+            <div id="side_logo">
+                <img src="../image/side_logo.png" alt="" width="200px">
+                <p>컴퓨터 이외의 환경에서는 작동이 어려울 수 있습니다.</p>
+        </aside>
+        <section>
+            <div class="prepare">
+                <div id="body">
+                    <textarea cols="30" rows="10" id="input_word" placeholder="출제할 단어들을 행으로 구분하여 입력해주세요.&#13;&#10;&#13;&#10;ex)&#13;&#10;사과&#13;&#10;바나나&#13;&#10;딸기"></textarea>
+                </div>
+                <div id="setting">
+                    <button id="start_btn">시작</button><br>
+                    <button id="delete_btn" style="font-size: 50px;">다시쓰기</button><br>
+                    <input type="checkbox" id="soundPlay_check" checked> 소리 재생하기<br>
+                    <input type="checkbox" id="stopwatch_check" checked> 경과한 시간 보여주기
+                </div>
+            </div>
+            <div class="quiz">
+                <div id="quiz_pannel">
+                    <div id="screen">
+                        
+                    </div>
+                </div>
+                <div id="quiz_control">
+                    <span id="ingame">
+                        <button id="correct_btn">정답</button>
+                        <button id="wrong_btn">오답</button>
+                        <button id="pass_btn">패스</button>
+                    </span>
+                    <span id="outgame">
+                        <button id="reload_btn">돌아가기</button>
+                    </span>
+                    <span id="stopwatch">
+                        00:00
+                    </span>
+                </div>
+            </div>
+        </section>
+        <footer></footer>
+    </div>
+</body>
+</html>

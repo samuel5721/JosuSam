@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../allStyle.css">
+    <script src="../JQuery/jquery-3.6.0.min.js"></script>
+<style>
+    :root {
+        --selectWidth: 1650px
+    }
+
+    #select {
+        width: var(--selectWidth);
+        height: 200px;
+
+        border: solid 5px black;
+        border-left: none; border-right: none;
+        box-sizing: border-box;
+    }
+
+    #select table {
+        height: 180px;
+        margin: 10px;
+
+        text-align: left;
+        font-size: 60px;
+        
+    }
+    #select td { padding: 10px; }
+    #select input { width: 70px; height: 60px; font-size: 60px; }
+    #select button { width: 200px; height: 150px; font-size: 50px; }
+
+    #result {
+        height: 500px;
+        padding: 20px;
+
+        box-sizing: border-box;
+    }
+    #result_screen {
+        width: auto;
+        height: 400px;
+        overflow-y:scroll;
+
+        border: solid 3px #1f206b;
+        background-color: white;
+
+        font-size: 30px;
+        text-align: left;
+    }
+    #result button {
+        width: 200px;
+        height: 50px;
+
+        margin: 10px;
+        font-size: 35px;
+    }
+
+    #board {
+        width: auto;
+        height: 100%;
+
+        padding: 10px;
+    }
+
+    #board_screen {
+        height: 85%;
+
+        padding: 10px;
+        border: dotted 5px black;
+
+        overflow-y:scroll;
+
+        text-align: left;
+        font-size: 100px;
+        font-weight: bold;
+    }
+
+    #board button {
+        width: 200px;
+        height: 50px;
+
+        margin: 10px;
+        font-size: 35px;
+    }
+</style>
+<script>
+    let student;
+    let students = [];
+    let group;
+    let groups = [];
+
+    $(function() {
+        $("#bigger_btn").hide();
+        $("#board").hide();
+
+        $("#grouping_btn").click(function() {
+            student = $("#student_number").val();
+            group = $("#group_number").val();
+            if(!isNaN(student) && !isNaN(group) && student!=0 && group!=0) {
+                groups = [];
+                groups = grouping(student, group);
+
+                showGroupScreen(groups);
+                $("#bigger_btn").show();
+            } else {
+                alert("값이 옳지 않습니다");
+            }
+        });
+
+        $("#bigger_btn").click(function() { //화면 커지기
+            $("#select").hide();
+            $("#result").hide();
+            $("#board").show();
+            showGroupBoard(groups);
+        });
+
+        $("#back_btn").click(function() {
+            $("#select").show();
+            $("#result").show();
+            $("#board").hide();
+        });
+
+        function grouping(student, group) {
+            for(let i=1; i<=student; i++) { students.push(i); }
+            let array = [];
+            let line = [];
+
+            let remainder = student % group;
+            let quotient = (student-remainder) / group;
+            let p = remainder; let k = quotient;
+
+            for(let i=0; i<group; i++) {
+                k=quotient;
+                if(p>0) { k++; p--; }
+
+                for(let j=0; j<k; j++) {
+                    let result = students[Math.floor(Math.random() * students.length) + 0]
+                    line.push(result);
+                    for(let ii=0; ii < students.length; ii++) {
+                        if(students[ii] === result)  {
+                            students.splice(ii, 1);
+                        }
+                    }
+                }
+                line.sort(function(a, b)  {
+                    return a - b;
+                });
+                array.push(line);
+                line = [];
+            }
+            return array;
+        }
+
+        function showGroupScreen(array) {
+            $("#result_screen").text("");
+            let j=0;
+            for(let i in array) {
+                j++;
+                $("#result_screen").append(j + "모둠 : "+ array[i] +" <br>");
+            }
+        }
+
+        function showGroupBoard(array) {
+            $("#board_screen").text("");
+            let j=0;
+            for(let i in array) {
+                j++;
+                $("#board_screen").append(j + "모둠 : "+ array[i] +" <br>");
+            }
+        }
+
+        
+    });
+</script>
+</head>
+<body>
+    <div id="wrap">
+        <header> 
+            <div class="box">
+                <div id="main_logo">
+                    <a href="../../index.html"><img src="../image/logo.png" alt="" width="250px"></a>
+                </div>
+            </div>
+        </header>
+        <aside>
+            <div id="side_logo">
+                <img src="../image/side_logo.png" alt="" width="200px">
+                <p>컴퓨터 이외의 환경에서는 작동이 어려울 수 있습니다.</p>
+        </aside>
+        <section>
+            <div id="select">
+                <table border="0">
+                    <tr>
+                        <td style="width: 900px">학생 수 : 1번 부터 <input type="text" id="student_number">번 까지</td>
+                        <td style="width: 500px">모둠 수 : <input type="text" id="group_number">개</td>
+                        <td style="width: 200px"><button id="grouping_btn">모둠<br>만들기</button></td>
+                    </tr>
+                </table>
+            </div>
+            <div id="result">
+                <div id="result_screen"></div>
+                <button id="bigger_btn">크게보기</button>
+            </div>
+            <div id="board">
+                <div id="board_screen"></div>
+                <button id="back_btn">돌아오기</button>
+            </div>
+        </section>
+        <footer></footer>
+    </div>
+</body>
+</html>

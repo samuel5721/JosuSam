@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="bin/allStyle.css">
+    <script src="bin/JQuery/jquery-3.6.0.min.js"></script>
+    <script>
+    </script>
+</head>
+<style>
+    /* 340*갯수 +40 */
+    @media only screen and (max-width: 1763px) {
+        :root { --sectionHeight: 1060px; }
+    }
+    @media only screen and (max-width: 1388px) {
+        :root { --sectionHeight: 1400px; }
+    }
+    @media only screen and (max-width: 1012px) {
+        :root { --sectionHeight: 2760px; }
+    }
+
+    .item {
+        display: inline-block;
+        width: 300px;
+        height: 300px;
+        padding: 5px;
+        margin: 20px 35px;
+        box-sizing: border-box;
+
+        border: solid 1px black;
+    }
+    .item img {
+        width: 230px;
+    }
+    .item p {
+        margin-top: 10px;
+        padding-top: 5px;
+        border-top: solid 3px black;
+
+        font-weight: bold;
+        font-family: "맑은 고딕";
+        font-size: 30px;
+    }
+</style>
+<body>
+    <div id="wrap">
+        <header> 
+            <div class="box">
+                <div id="main_logo">
+                    <a href="index.html"><img src="bin/image/logo.png" alt="" width="250px"></a>
+                </div>
+            </div>
+        </header>
+        <aside>
+            <div id="side_logo">
+                <img src="bin/image/side_logo.png" alt="" width="200px">
+                <p>컴퓨터 이외의 환경에서는 작동이 어려울 수 있습니다.</p>
+        </aside>
+        <section>
+            <a class="item" href="bin/web_1/draw.html"> <!-- 1번 항목 -->
+                <img src="bin/image/web1_img.png">
+                <p>번호 추첨하기</p>
+            </a>
+            <a class="item" href="bin/web_2/groups.html"> <!-- 2번 항목 -->
+                <img src="bin/image/web2_img.png">
+                <p>모둠 만들기</p>
+            </a>
+            <a class="item" href="bin/web_3/clock.html"> <!-- 3번 항목 -->
+                <img src="bin/image/web3_img.png">
+                <p>타이머/스톱워치</p>
+            </a>
+            <a class="item" href="bin/web_4/homeworkDiary.html"> <!-- 4번 항목 -->
+                <img src="bin/image/web4_img.png">
+                <p>알림장</p>
+            </a>
+            <a class="item" href="bin/web_5/tts.html"> <!-- 5번 항목 -->
+                <img src="bin/image/web5_img.png">
+                <p>TTS 말하기</p>
+            </a>
+            <a class="item" href="bin/web_6/speedQuiz.html"> <!-- 6번 항목 -->
+                <img src="bin/image/web6_img.png">
+                <p>스피드퀴즈</p>
+            </a>
+            <a class="item" href="bin/web_7/info.html"> <!-- 7번 항목 -->
+                <img src="bin/image/web7_img.png">
+                <p>사용자정보</p>
+            </a>
+            <a class="item" href="bin/web_8/enquiry.html"> <!-- 8번 항목 -->
+                <img src="bin/image/web8_img.png">
+                <p>도움말</p>
+            </a>
+
+        </section>
+        <footer></footer>
+    </div>
+</body>
+<script>
+</script>
+</html>

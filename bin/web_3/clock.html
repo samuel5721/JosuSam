@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../allStyle.css">
+    <script src="../JQuery/jquery-3.6.0.min.js"></script>
+<style>
+    :root {
+        --selectWidth: 1650px
+    }
+    /* section */
+    button {
+        width: 1000px;
+        height: 200px;
+
+        margin: 20px 0;
+
+        font-size: 100px;
+        font-weight: bold;
+    }
+    section p {
+        font-size: 20px;
+    }
+</style>
+<script>
+    $(function() {
+        $("#stopwatch_btn").click(function() { window.open("stopwatch.html", "" , "width=1104, height=565"); });
+        $("#timer_btn").click(function() { window.open("timer.html", "" , "width=1104, height=565") });
+    });
+</script>
+</head>
+<body>
+    <div id="wrap">
+        <header>
+            <div class="box">
+                <div id="main_logo">
+                    <a href="../../index.html"><img src="../image/logo.png" alt="" width="250px"></a>
+                </div>
+            </div>
+        </header>
+        <aside>
+            <div id="side_logo">
+                <img src="../image/side_logo.png" alt="" width="200px">
+                <p>컴퓨터 이외의 환경에서는 작동이 어려울 수 있습니다.</p>
+        </aside>
+        <section>
+            <button id="stopwatch_btn" style="margin-top: 100px;">스톱워치</button><br>
+            <button id="timer_btn">타이머</button>
+            <p>스톱워치나 타이머가 실행되지 않는다면 팝업 설정을 허용해주세요.</p>
+        </section>
+        <footer></footer>
+    </div>
+</body>
+</html>

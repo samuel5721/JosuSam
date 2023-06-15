@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>타이머</title>
+    <link rel="stylesheet" type="text/css" href="../allStyle.css">
+    <script src="../JQuery/jquery-3.6.0.min.js"></script>
+<style>
+    body {
+        height: 1000px;
+        background-image: url("blackboard.png");
+        background-repeat: no-repeat;
+        background-size: 100%;
+    }
+    #title {
+        margin-top: 100px;
+        text-align: center;
+        color: white;
+    }
+    #monitor {
+        text-align: center;
+        color: white;
+        font-size: 200px;
+    }
+    #monitor input {
+        width: 250px;
+
+        background:transparent;
+        border: none;
+
+        color: white;
+        font-size: 200px;
+    }
+
+    #buttons {
+        text-align: center;
+    }
+    #buttons button {
+        width: 150px;
+        height: 75px;
+        font-size: 40px;
+        font-weight: bold;
+    }
+    #alarm {
+        margin-top: 5px;
+        text-align: center;
+        font-size: 30px;
+        color: white;
+    }
+    #alarm button {
+        width: 150px;
+        height: 30px;
+        font-size: 20px;
+    }
+</style>
+</head>
+<script>
+    let timerId;
+    let time;
+    let hour, min, sec;
+    let audio = new Audio("alarmSound.mp3");
+
+    $(function() {
+        $("#alarm").hide();
+
+        $("#start_btn").click(function() { setTime(); if(time!=0)startTimer(); });
+        $("#stop_btn").click(function() { stopTimer(); });
+        $("#reset_btn").click(function() { resetTimer(); });
+        $("#turndown_btn").click(function() { $("#alarm").hide(); audio.pause(); audio.currentTime = 0; });
+    });
+
+    function printTime() {
+        $("#monitor").text(getTimeFormatString());
+        time--;
+    }
+
+    function setTime() {
+        time = 0;
+        if (isNaN($("#hour_monitor").val()) || isNaN($("#minute_monitor").val()) || isNaN($("#second_monitor").val()) ) return null;
+        time += parseInt($("#second_monitor").val());
+        time += parseInt($("#minute_monitor").val())*60;
+        time += parseInt($("#hour_monitor").val())*3600;
+        return time;
+    }
+
+    function startTimer() {
+        if(time < 0) { TimeUp(); return;} 
+        printTime();
+        stopTimer();
+        timerId = setTimeout(startTimer, 1000);
+    }
+
+    function stopTimer() {
+        if (timerId != null) {
+            clearTimeout(timerId);
+        }
+    }
+
+    function resetTimer() {
+        stopTimer();
+        $("#hour_monitor").val("00");
+        $("#minute_monitor").val("00");
+        $("#second_monitor").val("00");
+        time = 0;
+    }
+
+    function getTimeFormatString() {
+        hour = parseInt(time/3600)%60;
+        min = parseInt(time/60)%60;
+        sec = time%60
+
+        $("#hour_monitor").val(String(hour).padStart(2, '0'));
+        $("#minute_monitor").val(String(min).padStart(2, '0'));
+        $("#second_monitor").val(String(sec).padStart(2, '0'));
+    }
+
+    function TimeUp() {
+        $("#alarm").show();
+        audio.play();
+    }
+</script>
+<body>
+<div id="wrap">
+    <h1 id="title">타이머</h1>
+    <div id="monitor">
+        <input type="text" id="hour_monitor" value="00">:<input type="text" id="minute_monitor" value="00">:<input type="text" id="second_monitor" value="00">
+    </div>
+</input>
+    <div id="buttons">
+        <button id="start_btn">시작</button>
+        <button id="stop_btn">중지</button>
+        <button id="reset_btn">초기화</button>
+    </div>
+    <div id="alarm">
+        타이머가 끝났습니다! <button id="turndown_btn">알람 종료하기</button>
+    </div>
+</div>
+</body>
+</html>
